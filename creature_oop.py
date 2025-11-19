@@ -18,6 +18,20 @@ class Creature:
     def __str__(self):
         return f"{self.name} (HP: {self.hp})"
 
+class FlyingCreature(Creature):
+    def __init__(self,name,hp,attack_power):
+        super().__init__(self,name,hp,attack_power)
+        self.altitude = 0
+    def fly_to(self,new_altitude):
+        self.altitude = new_altitude
+    def attack(self, target):
+        if not self.is_alive():
+            print(f"{self.name} cannot attack because it is defeated.")
+            return
+
+        print(f"{self.name} attacks {target.name} for {self.attack_power} damage!")
+        target.hp -= self.attack_power
+
 if __name__ == "__main__":
     print("=== Creature Class Tests ===\n")
 
