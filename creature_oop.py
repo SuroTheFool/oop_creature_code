@@ -20,7 +20,7 @@ class Creature:
 
 class FlyingCreature(Creature):
     def __init__(self,name,hp,attack_power):
-        super().__init__(self,name,hp,attack_power)
+        super().__init__(name,hp,attack_power)
         self.altitude = 0
     def fly_to(self,new_altitude):
         self.altitude = new_altitude
