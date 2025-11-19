@@ -48,6 +48,19 @@ class FlyingCreature(Creature):
         print(f"{self.name} attacks {target.name} for {self.attack_power} damage!")
         target.hp -= self.attack_power
 
+class FireCreature(Creature):
+    def __init__(self,name,hp,attack_power):
+        super().__init__(name,hp,attack_power)
+        self.fire_level  = 0
+    def emit_fire(self,new_fire):
+        self.fire_level = new_fire
+    def attack(self, target):
+        if not self.is_alive():
+            print(f"{self.name} cannot attack because it is defeated.")
+            return
+        print(f"{self.name} attacks with fire {target.name} for {self.attack_power} damage!")
+        target.hp -= self.attack_power
+
 if __name__ == "__main__":
     print("=== Creature Class Tests ===\n")
 
@@ -96,7 +109,10 @@ if __name__ == "__main__":
     goblin.attack(slime)
     print(f"Slime should be at HP 0 → Actual: {slime.hp}")
     print()
-    print("=== Tests Completed ===")
+    print("=== FireCreature Tests ===\n")
+    fire_spirit = FireCreature("Fire Spirit", 60, 7)
+    fire_spirit.emit_fire(30)
+    print(f"Fire should be 30 → Actual: {fire_spirit.fire_level}")
     print()
 
     print("=== SwimmingCreature Tests ===\n")
