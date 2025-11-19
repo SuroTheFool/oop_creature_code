@@ -113,6 +113,9 @@ if __name__ == "__main__":
     fire_spirit = FireCreature("Fire Spirit", 60, 7)
     fire_spirit.emit_fire(30)
     print(f"Fire should be 30 → Actual: {fire_spirit.fire_level}")
+    dummy = Creature("Practice Dummy", 40, 0)
+    fire_spirit.attack(dummy)
+    print(f"Dummy HP should be 33 → Actual: {dummy.hp}")
     print()
 
     print("=== SwimmingCreature Tests ===\n")
