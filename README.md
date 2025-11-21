@@ -28,9 +28,11 @@ It is designed to practice object-oriented programming, especially inheritance: 
 
 
 ---
-
 ## Project Structure
+
+```
 oop_creature_code/
 │
 ├── creature_simulation.py # Base class + subclasses
 └── README.md
+```
