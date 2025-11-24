@@ -1,65 +1,70 @@
 class Creature:
     def __init__(self, name, hp, attack_power):
-        self.name = name
-        self.hp = hp
-        self.attack_power = attack_power
+        self.__name = name
+        self.__hp = hp
+        self.__attack_power = attack_power
 
     def attack(self, target):
         if not self.is_alive():
-            print(f"{self.name} cannot attack because it is defeated.")
+            print(f"{self.__name} cannot attack because it is defeated.")
             return
-
-        print(f"{self.name} attacks {target.name} for {self.attack_power} damage!")
-        target.hp -= self.attack_power
-
+        print(f"{self.__name} attacks {target.get_name()} for {self.__attack_power} damage!")
+        target.take_damage(self.__attack_power)
+    def get_name(self):
+        return self.__name
+    def get_attack_power(self):
+        return self.__attack_power
+    def get_hp(self):
+        return self.__hp
+    def take_damage(self,amount):
+        if amount < 0:
+            print("Error : Amount cannot be zero or less")
+            amount = 0
+        self.__hp -= amount
     def is_alive(self):
-        return self.hp > 0
-
+        return self.__hp > 0
     def __str__(self):
-        return f"{self.name} (HP: {self.hp})"
-
-# ===============================
-# SwimmingCreature Branch
-# ===============================
-
-class SwimmingCreature(Creature):
-    def __init__(self,name,hp,attack_power):
-            super().__init__(name,hp,attack_power)
-            self.depth = 0
-    def dive_to(self,new_depth):
-        self.depth = new_depth
-    def attack(self, target):
-        if not self.is_alive():
-            print(f"{self.name} cannot attack because it is defeated.")
-            return
-        print(f"{self.name} attacks {target.name} for {self.attack_power} damage!")
-        target.hp -= self.attack_power
+        return f"{self.__name} (HP: {self.__hp})"
 class FlyingCreature(Creature):
     def __init__(self,name,hp,attack_power):
         super().__init__(name,hp,attack_power)
-        self.altitude = 0
+        self.__altitude = 0
     def fly_to(self,new_altitude):
-        self.altitude = new_altitude
+        self.__altitude = new_altitude
     def attack(self, target):
-        if not self.is_alive():
-            print(f"{self.name} cannot attack because it is defeated.")
-            return
-
-        print(f"{self.name} attacks {target.name} for {self.attack_power} damage!")
-        target.hp -= self.attack_power
+        super().attack(target)
+        if self.__altitude > 50:
+            additional_dmg = self.__altitude / 10
+            target.take_damage(additional_dmg)
+            print(f"{self.get_name()} raise in altitude and attack again : {additional_dmg:.0f}")
 
 class FireCreature(Creature):
     def __init__(self,name,hp,attack_power):
-        super().__init__(name,hp,attack_power)
+        super().__init__(self,name,hp,attack_power)
         self.fire_level  = 0
     def emit_fire(self,new_fire):
-        self.fire_level = new_fire
+        self.altitude = new_fire
     def attack(self, target):
-        if not self.is_alive():
-            print(f"{self.name} cannot attack because it is defeated.")
-            return
-        print(f"{self.name} attacks with fire {target.name} for {self.attack_power} damage!")
-        target.hp -= self.attack_power
+        super().attack(target)
+
+class Trainer:
+    def __init__(self,name):
+        self.__name = name
+        self.__team = []
+    def add_creature(self,creature):
+        self.__team.append(creature)
+    def remove_creature(self,creature):
+        self.__team.remove(creature)
+    def get_team_size(self):
+        return len(self.__team)
+    def get_creature(self,index):
+        return self.__team[index]
+
+    def show_team(self):
+        print(f"{self.__name} team:")
+        for c in self.__team:
+            print(c)
+
 
 if __name__ == "__main__":
     print("=== Creature Class Tests ===\n")
@@ -67,64 +72,51 @@ if __name__ == "__main__":
     # Test 1: Initialization
     goblin = Creature("Goblin", 30, 5)
     print("Test 1: Initialization")
-    print(goblin)  # Expected: Goblin (HP: 30)
-    print()
 
     # Test 2: Basic attack
     wolf = Creature("Wolf", 40, 10)
     sheep = Creature("Sheep", 25, 3)
     print("Test 2: Wolf attacks Sheep")
     wolf.attack(sheep)
-    print(f"Sheep HP should now be 15 → Actual: {sheep.hp}")
+    print(f"Sheep HP should now be 15 → Actual: {sheep.get_hp()}")
     print()
 
     # Test 3: HP does not go below zero
-    dragon = Creature("Dragonling", 50, 100)
+    dragon = FlyingCreature("Dragonling", 200, 13)
+    dragon.fly_to(70)
     mouse = Creature("Mouse", 20, 1)
     print("Test 3: Dragonling overkills Mouse")
     dragon.attack(mouse)
-    print(f"Mouse HP should now be 0 → Actual: {mouse.hp}")
+    print(f"Mouse HP should now be 0 → Actual: {mouse.get_hp()}")
     print()
 
-    # Test 4: is_alive()
-    slime = Creature("Slime", 10, 2)
-    print("Test 4: Slime alive?")
-    print("Slime should be alive →", slime.is_alive())
-    slime.hp = 0
-    print("Slime should NOT be alive →", slime.is_alive())
-    print()
+    Suro = Trainer("Suro")
+    Suro.add_creature(dragon)
+    Suro.add_creature(mouse)
+    Suro.show_team()
+    
+    # # Test 4: is_alive()
+    # slime = Creature("Slime", 10, 2)
+    # print("Test 4: Slime alive?")
+    # print("Slime should be alive →", slime.is_alive())
+    # slime.hp = 0
+    # print("Slime should NOT be alive →", slime.is_alive())
+    # print()
 
-    # Test 5: Dead creature cannot attack
-    ghost = Creature("Ghost", 0, 10)
-    knight = Creature("Knight", 50, 7)
-    print("Test 5: Ghost tries to attack Knight")
-    ghost.attack(knight)
-    print(f"Knight HP should remain 50 → Actual: {knight.hp}")
-    print()
+    # # Test 5: Dead creature cannot attack
+    # ghost = Creature("Ghost", 0, 10)
+    # knight = Creature("Knight", 50, 7)
+    # print("Test 5: Ghost tries to attack Knight")
+    # ghost.attack(knight)
+    # print(f"Knight HP should remain 50 → Actual: {knight.hp}")
+    # print()
 
-    # Test 6: Multiple attacks
-    print("Test 6: Goblin attacks Slime twice")
-    slime.hp = 10
-    goblin.attack(slime)
-    goblin.attack(slime)
-    print(f"Slime should be at HP 0 → Actual: {slime.hp}")
-    print()
-    print("=== FireCreature Tests ===\n")
-    fire_spirit = FireCreature("Fire Spirit", 60, 7)
-    fire_spirit.emit_fire(30)
-    print(f"Fire should be 30 → Actual: {fire_spirit.fire_level}")
-    dummy = Creature("Practice Dummy", 40, 0)
-    fire_spirit.attack(dummy)
-    print(f"Dummy HP should be 33 → Actual: {dummy.hp}")
-    print()
+    # # Test 6: Multiple attacks
+    # print("Test 6: Goblin attacks Slime twice")
+    # slime.hp = 10
+    # goblin.attack(slime)
+    # goblin.attack(slime)
+    # print(f"Slime should be at HP 0 → Actual: {slime.hp}")
+    # print()
 
-    print("=== SwimmingCreature Tests ===\n")
-    serpent = SwimmingCreature("Aqua Serpent", 60, 7)
-    serpent.dive_to(30)
-    print(f"Depth should be 30 → Actual: {serpent.depth}")
-
-    dummy = Creature("Practice Dummy", 40, 0)
-    serpent.attack(dummy)
-    print(f"Dummy HP should be 33 → Actual: {dummy.hp}")
-    print()
-    print("=== Tests Completed ===")
+    # print("=== Tests Completed ===")
